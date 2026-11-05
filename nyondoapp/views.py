@@ -621,6 +621,7 @@ def add_sale_view(request):
                 'posted_customer_name': customer_name,
                 'posted_phone': phone_number,
                 'posted_notes': notes,
+                
                 'posted_payment_status': payment_status,
                 'posted_payment_method': payment_method,
                 'posted_wants_delivery': wants_delivery,

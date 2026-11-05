@@ -9,6 +9,9 @@ __pycache__/
 # Database
 db.sqlite3
 
+# Collected static files (built during deploy)
+staticfiles/
+
 # VS Code settings
 .vscode/
 
@@ -18,3 +21,4 @@ db.sqlite3
 # OS files
 .DS_Store
 Thumbs.db
+data.json

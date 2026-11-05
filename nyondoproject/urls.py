@@ -16,11 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
+
+
+# Simple unauthenticated health check for Render (no DB access)
+def health(request):
+    return JsonResponse({'status': 'ok'})
 
 
 urlpatterns = [
+    path('health/', health, name='health'),
     path('admin/', admin.site.urls),
     path('', include('nyondoapp.urls')),
-   
-]
+    
+ ]
 handler404 = 'nyondoapp.views.custom_404_view'

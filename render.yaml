@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: nyondo-stock-hardware
+    runtime: python
+    plan: free
+    # manage.py and the package are at the repo root, so no rootDir is needed.
+    buildCommand: bash build.sh
+    startCommand: gunicorn nyondoproject.wsgi:application --bind 0.0.0.0:$PORT --log-file -
+    healthCheckPath: /health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.14.10
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nyondo-db
+          property: connectionString
+
+databases:
+  - name: nyondo-db
+    databaseName: nyondodb
+    plan: free

@@ -24,12 +24,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-0n!lr05wyszb&b6k30=7&2*ykj)nvy0zr8mt0syfe7)*3cp@dh')
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-if os.environ.get('RAILWAY_STATIC_URL'):
-    ALLOWED_HOSTS.append(os.environ.get('RAILWAY_STATIC_URL'))
-ALLOWED_HOSTS.append('.railway.app')
+
+# Render injects RENDER_EXTERNAL_HOSTNAME (e.g. nyondo-stock.onrender.com).
+render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if render_hostname:
+    ALLOWED_HOSTS.append(render_hostname)
+    ALLOWED_HOSTS.append('.' + render_hostname)
+
+# Optional extra hosts, comma-separated (e.g. custom domain)
+extra_hosts = os.environ.get('ALLOWED_HOSTS', '')
+if extra_hosts:
+    ALLOWED_HOSTS.extend(h.strip() for h in extra_hosts.split(',') if h.strip())
 
 # Application definition
 
@@ -124,12 +132,26 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'nyondoapp/static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [BASE_DIR / 'nyondoapp/static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # PREVENT BROWSER CACHING OF PROTECTED PAGES
 SESSION_COOKIE_SECURE = False  # Set True in production with HTTPS
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-CSRF_TRUSTED_ORIGINS = ['https://nyondostock.up.railway.app']
+# Django >= 5.1: STATICFILES_STORAGE was removed; use the STORAGES dict.
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+# CSRF — Render's own hostname plus any extra origins (comma-separated)
+CSRF_TRUSTED_ORIGINS = []
+if render_hostname:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{render_hostname}')
+csrf_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if csrf_origins:
+    CSRF_TRUSTED_ORIGINS.extend(o.strip() for o in csrf_origins.split(',') if o.strip())
