@@ -1,19 +1,28 @@
 # IMPORT DJANGO CORE FUNCTIONS
 import re
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
-from django.contrib.staticfiles import finders
-from django.utils import timezone
 from datetime import datetime
 from decimal import Decimal, ROUND_FLOOR
-from django.db.models import Q, Sum, F
+
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles import finders
+from django.db.models import F, Q, Sum
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+
 from .models import (
-    StockItem, Sale, SaleItem,
-    Supplier, SupplierTransaction, SupplierCredit, SupplierCreditPayment,
-    Customer, CustomerCreditPayment,
-    Deposit, DepositPayment,
+    Customer,
+    CustomerCreditPayment,
+    Deposit,
+    DepositPayment,
+    Sale,
+    SaleItem,
+    StockItem,
+    Supplier,
+    SupplierCredit,
+    SupplierCreditPayment,
+    SupplierTransaction,
 )
 
 

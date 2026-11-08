@@ -91,7 +91,8 @@ WSGI_APPLICATION = 'nyondoproject.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        ssl_require=bool(os.environ.get('DATABASE_URL')),
     )
 }
 
